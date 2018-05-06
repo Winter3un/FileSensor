@@ -33,7 +33,7 @@ class FileSensorSpider(scrapy.Spider):
         # generate new urls with /dict/filename.txt
         for new_url in gen_urls_filename(response.url):
             # print(new_url)
-            yield scrapy.Request(new_url, callback=self.vul_found)
+            yield scrapy.Request(new_url, callback=self.parse,dont_filter=True)
         # generate new urls with /dict/suffix.txt
         for new_url in gen_urls(response.url):
             # avoid recursive loop

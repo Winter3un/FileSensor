@@ -19,6 +19,7 @@ def init_options():
     spider_data.custom_404_regex = args.get('--404')
     spider_data.found = []
     spider_data.crawled = []
+    spider_data.discover_path = []
     conf.save_results = args.get('-o')
 
     load_dict_suffix()
@@ -96,6 +97,10 @@ def gen_urls_filename(base_url):
     	path =  path[:path.rfind("/")+1]
     else:
     	path = "/"
+    if path not in spider_data.discover_path:
+        spider_data.discover_path.append(path)
+    else:
+        return []
     # print("123")
     # if not urlparse(url).path:
     #     return []
@@ -122,7 +127,7 @@ def gen_urls_filename(base_url):
         #     if '{NAME}' in each or '{EXT}' in each:
         #         coninue
         final_urls.append(new_filename.replace('..', '.'))
-    print(final_urls)
+    # print(final_urls)
 
     return final_urls
 
