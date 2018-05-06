@@ -1,3 +1,7 @@
+# 2018-5-7
+
+增加了文件名爆破功能，配合已有的动态规则，使扫描更加全面 by Winter3un
+
 # FileSensor
 
 **Dynamic file detection tool based on crawler**  
