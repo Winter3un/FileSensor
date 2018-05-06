@@ -22,12 +22,14 @@ def init_options():
     conf.save_results = args.get('-o')
 
     load_dict_suffix()
+    load_dict_filename()
 
 
 def set_path():
     paths.root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     paths.dict_path = os.path.join(paths.root_path, 'dict')
     paths.default_suffix_dict = os.path.join(paths.dict_path, 'suffix.txt')
+    paths.default_filename_dict = os.path.join(paths.dict_path, 'filename.txt')
     paths.output_path = os.path.join(paths.root_path, 'output')
 
     if not all(os.path.exists(p) for p in paths.values()):
@@ -39,6 +41,9 @@ def load_dict_suffix():
     with open(paths.default_suffix_dict) as f:
         dict_data.url_suffix = set(f.read().split('\n')) - {'', '#'}
 
+def load_dict_filename():
+    with open(paths.default_filename_dict) as f:
+        dict_data.url_filename = set(f.read().split('\n')) - {'', '#'}
 
 def gen_urls(base_url):
     def _split_filename(filename):
@@ -73,7 +78,53 @@ def gen_urls(base_url):
         final_urls.append(new_filename.replace('..', '.'))
 
     return final_urls
+def gen_urls_filename(base_url):
 
+    def _split_filename(filename):
+
+        full_filename = filename.rstrip('.')
+        extension = full_filename.split('.')[-1]
+        name = '.'.join(full_filename.split('.')[:-1])
+
+        return name, extension
+    # print("1234")
+    url = base_url.split('?')[0].rstrip('/')
+    # print("123")
+    up = urlparse(base_url)
+    path = up.path
+    if path:
+    	path =  path[:path.rfind("/")+1]
+    else:
+    	path = "/"
+    # print("123")
+    # if not urlparse(url).path:
+    #     return []
+
+    # path = up.path
+    # print(path)
+    filename = url.split('/')[-1]
+
+    isfile = True if '.' in filename else False
+
+    if isfile:
+        name, extension = _split_filename(filename)
+
+    final_urls = []
+    # print("123")
+
+    for each in dict_data.url_filename:
+        # print(up)
+        new_filename = up.scheme + "://" +up.netloc + path + each
+        # print("new_filename")
+        # if isfile:
+        #     new_filename = new_filename.replace('{NAME}', name).replace('{EXT}', extension)
+        # else:
+        #     if '{NAME}' in each or '{EXT}' in each:
+        #         coninue
+        final_urls.append(new_filename.replace('..', '.'))
+    print(final_urls)
+
+    return final_urls
 
 def final_message():
     print('-' * 10)

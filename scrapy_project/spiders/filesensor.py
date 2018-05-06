@@ -6,7 +6,7 @@ import scrapy
 import re
 from urllib.parse import urlparse
 from lib.data import spider_data
-from lib.common import gen_urls
+from lib.common import gen_urls,gen_urls_filename
 
 
 class FileSensorSpider(scrapy.Spider):
@@ -25,9 +25,15 @@ class FileSensorSpider(scrapy.Spider):
         return [scrapy.Request(self.url, callback=self.parse, dont_filter=True)]
 
     def parse(self, response):
+
         spider_data.crawled.append(response.url)
         print('[%s]%s' % (response.status, response.url))
-
+        # print("123")
+        # print(gen_urls_filename(response.url))
+        # generate new urls with /dict/filename.txt
+        for new_url in gen_urls_filename(response.url):
+            # print(new_url)
+            yield scrapy.Request(new_url, callback=self.vul_found)
         # generate new urls with /dict/suffix.txt
         for new_url in gen_urls(response.url):
             # avoid recursive loop
